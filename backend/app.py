@@ -21,6 +21,32 @@ app.config['MYSQL_PORT'] = 37733
 
 mysql = MySQL(app)
 
+with app.app_context():
+
+    cursor = mysql.connection.cursor()
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        username VARCHAR(255),
+        email VARCHAR(255),
+        password VARCHAR(255)
+    )
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS favorites (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        user_id INT,
+        city_name VARCHAR(255),
+        state_name VARCHAR(255)
+    )
+    """)
+
+    mysql.connection.commit()
+
+    cursor.close()
+
 # =========================
 # Secret Key
 # =========================
