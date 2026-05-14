@@ -13,10 +13,11 @@ CORS(app)
 # MySQL Configuration
 # =========================
 
-app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_HOST'] = 'yamanote.proxy.rlwy.net'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'travel_system'
+app.config['MYSQL_PASSWORD'] = 'bHMnfVXWXyARMHGkXaNEYFkoFffZtQgn'
+app.config['MYSQL_DB'] = 'railway'
+app.config['MYSQL_PORT'] = 37733
 
 mysql = MySQL(app)
 
@@ -155,6 +156,68 @@ def recommend():
         })
 
     return jsonify(final_result)
+
+
+# =========================
+# Add Favorite Route
+# =========================
+
+@app.route('/add_favorite', methods=['POST'])
+def add_favorite():
+
+    data = request.json
+
+    token = data['token']
+    city = data['city']
+    state = data['state']
+
+    decoded = jwt.decode(
+        token,
+        app.config['SECRET_KEY'],
+        algorithms=['HS256']
+    )
+
+    user_id = decoded['user_id']
+
+    cursor = mysql.connection.cursor()
+
+    # Check already exists
+
+    cursor.execute(
+        '''
+        SELECT * FROM favorites
+        WHERE user_id=%s AND city_name=%s
+        ''',
+        (user_id, city)
+    )
+
+    existing = cursor.fetchone()
+
+    if existing:
+
+        cursor.close()
+
+        return jsonify({
+            'message': 'Already added to wishlist'
+        })
+
+    # Insert new favorite
+
+    cursor.execute(
+        '''
+        INSERT INTO favorites(user_id, city_name, state_name)
+        VALUES(%s, %s, %s)
+        ''',
+        (user_id, city, state)
+    )
+
+    mysql.connection.commit()
+
+    cursor.close()
+
+    return jsonify({
+        'message': 'Added to favorites'
+    })
 
 # =========================
 # Get Favorites Route
