@@ -112,10 +112,10 @@ function App() {
     }
 
     try {
-      const response = await axios.post("https://travel-recommendation-system-ybrv.onrender.com/favorite", {
+      const response = await axios.post("https://travel-recommendation-system-ybrv.onrender.com/save-favorite", {
         token,
-        city_name: cityName,
-        state_name: stateName,
+        city: cityName,
+        state: stateName,
       });
 
       alert(response.data.message);
