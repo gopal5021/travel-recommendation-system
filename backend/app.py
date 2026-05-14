@@ -292,7 +292,60 @@ def favorites():
 
     return jsonify(final_data)
 
+@app.route('/save-favorite', methods=['POST'])
+def save_favorite():
 
+    data = request.json
+
+    token = data['token']
+    city = data['city']
+    state = data['state']
+
+    decoded = jwt.decode(
+        token,
+        app.config['SECRET_KEY'],
+        algorithms=['HS256']
+    )
+
+    user_id = decoded['user_id']
+
+    cursor = mysql.connection.cursor()
+
+    cursor.execute(
+        '''
+        SELECT * FROM favorites
+        WHERE user_id=%s AND city_name=%s
+        ''',
+        (user_id, city)
+    )
+
+    existing = cursor.fetchone()
+
+    if existing:
+
+        cursor.close()
+
+        return jsonify({
+            'message': 'Already added to wishlist'
+        })
+
+    cursor.execute(
+        '''
+        INSERT INTO favorites(user_id, city_name, state_name)
+        VALUES(%s, %s, %s)
+        ''',
+        (user_id, city, state)
+    )
+
+    mysql.connection.commit()
+
+    cursor.close()
+
+    return jsonify({
+        'message': 'Favorite saved successfully'
+    })
+    
+    
 # =========================
 # Run App
 # =========================
