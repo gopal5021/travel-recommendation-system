@@ -7,8 +7,12 @@ function App() {
   const [budget, setBudget] = useState("");
   const [limit, setLimit] = useState("");
 
-  const [results, setResults] = useState([]);
-  const [searched, setSearched] = useState(false);
+  const [results, setResults] = useState(
+    JSON.parse(localStorage.getItem("results")) || [],
+  );
+  const [searched, setSearched] = useState(
+    JSON.parse(localStorage.getItem("results"))?.length > 0,
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -66,14 +70,19 @@ function App() {
     try {
       setLoading(true);
 
-      const response = await axios.post("https://travel-recommendation-system-ybrv.onrender.com/recommend", {
-        state,
-        rating,
-        maxBudget: budget,
-        limit,
-      });
+      const response = await axios.post(
+        "https://travel-recommendation-system-ybrv.onrender.com/recommend",
+        {
+          state,
+          rating,
+          maxBudget: budget,
+          limit,
+        },
+      );
 
       setResults(response.data);
+
+      localStorage.setItem("results", JSON.stringify(response.data));
       setSearched(true);
     } catch (error) {
       console.log(error);
@@ -92,6 +101,7 @@ function App() {
     setResults([]);
     setSearched(false);
     setError("");
+    localStorage.removeItem("results");
   };
 
   const logoutUser = () => {
@@ -112,11 +122,14 @@ function App() {
     }
 
     try {
-      const response = await axios.post("https://travel-recommendation-system-ybrv.onrender.com/save-favorite", {
-        token,
-        city: cityName,
-        state: stateName,
-      });
+      const response = await axios.post(
+        "https://travel-recommendation-system-ybrv.onrender.com/save-favorite",
+        {
+          token,
+          city: cityName,
+          state: stateName,
+        },
+      );
 
       alert(response.data.message);
     } catch (error) {
