@@ -66,7 +66,7 @@ function App() {
     try {
       setLoading(true);
 
-      const response = await axios.post("http://127.0.0.1:5000/recommend", {
+      const response = await axios.post("https://travel-recommendation-system-ybrv.onrender.com/recommend", {
         state,
         rating,
         maxBudget: budget,
@@ -112,7 +112,7 @@ function App() {
     }
 
     try {
-      const response = await axios.post("http://127.0.0.1:5000/favorite", {
+      const response = await axios.post("https://travel-recommendation-system-ybrv.onrender.com/favorite", {
         token,
         city_name: cityName,
         state_name: stateName,

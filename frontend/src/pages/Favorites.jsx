@@ -19,7 +19,7 @@ function Favorites() {
       const token = localStorage.getItem('token')
 
       const response = await axios.post(
-        'http://127.0.0.1:5000/favorites',
+        'https://travel-recommendation-system-ybrv.onrender.com/favorites',
         {
           token
         }

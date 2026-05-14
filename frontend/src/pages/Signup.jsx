@@ -15,7 +15,7 @@ function Signup() {
     try {
 
       await axios.post(
-        'http://127.0.0.1:5000/signup',
+        'https://travel-recommendation-system-ybrv.onrender.com/signup',
         {
           username,
           email,
